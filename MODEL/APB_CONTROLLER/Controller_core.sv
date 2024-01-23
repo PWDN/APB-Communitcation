@@ -8,7 +8,7 @@ module controller_core();
   logic [0:0] o_mem_wr;
   logic [0:0] i_o_mem_addr;
   logic [DATA_WIDTH-1:0] o_mem_data_w;
-  logic [DATA_WDITH-1:0] i_mem_dada_r;
+  logic [DATA_WIDTH-1:0] i_mem_dada_r;
   logic [0:0] o_mem_dump;
 
 

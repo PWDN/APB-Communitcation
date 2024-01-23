@@ -18,7 +18,7 @@ module APB_slave_arbiter #(
   output logic [DATA_WIDTH-1:0] o_PRDATA;
   output logic o_PSLVERR;
 
-  always_comb
+  always @ (*)
   begin
     if (i_PWRITE)
       begin
@@ -31,7 +31,7 @@ module APB_slave_arbiter #(
         o_PSLVERR = 0;
         o_PREADY = 1;
         case (i_PSEL)
-          'd1: o_PRDATA = i_PRDATA[DATA_WIDTH-1:0]
+          'd1: o_PRDATA = i_PRDATA[DATA_WIDTH-1:0];
           'd2: o_PRDATA = i_PRDATA[(DATA_WIDTH*2)-1:DATA_WIDTH];
           default: 
             begin

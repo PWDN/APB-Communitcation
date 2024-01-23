@@ -1,4 +1,4 @@
-module apb_slave_exe_w47 #(
+module APB_slave_exe_w47 #(
 	parameter DATA_WIDTH = 3,
 	parameter ADDR_WIDTH = 16)(
 			i_PCLK,

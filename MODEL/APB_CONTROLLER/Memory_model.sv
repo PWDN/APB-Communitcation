@@ -24,7 +24,7 @@ initial begin
 end
 
 always @(posedge i_clk) begin
-   if (i_en & !i_wr) 
+   if (i_en) 
    begin
       if (!i_wr)
          o_data_r         <= memory[i_addr];
