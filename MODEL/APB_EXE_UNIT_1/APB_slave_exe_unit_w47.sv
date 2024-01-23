@@ -30,7 +30,7 @@ module APB_slave_exe_w47 #(
 	logic [3:0] s_model_status;
 
   exe_unit_w47  #(.MBIT(DATA_WIDTH), 
-                  .NBIT(DATA_WIDTH))    exe_unit_w48_model (.i_oper(s_in_oper), 
+                  .NBIT(DATA_WIDTH))    exe_unit_w47_model (.i_oper(s_in_oper), 
                                                        .i_argA(s_in_argA),
                                                        .i_argB(s_in_argB),
                                                        .i_clk(s_in_clk),

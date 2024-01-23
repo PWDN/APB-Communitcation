@@ -1,6 +1,6 @@
 module controller_wrapper #(
   parameter SEL_WIDTH = 1,
-  parameter ADDR_WIDTH = 16,
+  parameter ADDR_WIDTH = 4,
   parameter DATA_WIDTH = 16
   )(
     i_PCLK,
@@ -43,7 +43,7 @@ module controller_wrapper #(
     .i_wr(m_wr),
     .i_addr(m_addr),
     .i_data_w(m_data_w),
-    .o_data_r(m_data_r),
+    .o_data_r(m_data_r), // to controller
     .i_dump(m_dump)
   );
 
