@@ -7,15 +7,6 @@ module testbench;
   parameter SEL_WIDTH  = `SEL_WIDTH;
 
   logic s_clk;
-  logic s_pready;
-  logic [DATA_WIDTH-1:0] s_prdata;
-  logic s_pslverr;
-  // logic s_wr;
-  // logic [ADDR_WIDTH-1:0] s_addr;
-  // logic [DATA_WIDTH-1:0] s_data_w;
-  // logic [DATA_WIDTH-1:0] s_data_r;
-  // logic s_dump;
-
   // Memory_model #(
   //   ADDR_WIDTH,
   //   DATA_WIDTH,
@@ -35,10 +26,7 @@ module testbench;
     ADDR_WIDTH,
     DATA_WIDTH
   ) wrap (
-    .i_PCLK(s_clk),
-    .o_PREADY(s_pready),
-    .o_PRDATA(s_prdata),
-    .o_PSLVERR(s_pslverr)
+    .i_PCLK(s_clk)
   );
 
   always #1 s_clk <= ~s_clk;

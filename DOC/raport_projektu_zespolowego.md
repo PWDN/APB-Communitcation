@@ -71,7 +71,7 @@ Kontroler używa własny rodzaj instrukcyj niezbędnych do pracy z rejestrami. T
 | Instrukcja |    Funkcja    |     Dodatkowe polecenie    |
 | -----------|:-------------:|:---------------:|
 |  0000      |  Wstrzymaj o jedyn takt zegara    | -  |
-|  0001      |  Przenieść wartość z rejestra na rejestr      | Adres Skąd, adres Dokąd           |
+|  0001      |  Przenieść wartość z rejestra na rejestr      | Adres Skąd, adres Dokąd, co |
 |  0002      |  Wgraj do panięci (emulowanej) | -  |
 |  FFFF      |  Koniec pracy, analog HLT x86    | -   |
 
@@ -81,7 +81,7 @@ Wszystkie polecenia poza **0001** wywolane są "jedną linijką", wowczas gdy **
 | -----------|:----------------------------:|
 |  0001      |  Przenieść wartość    |
 |  0000      |  Z adresu rejestru 0000 (nikąd)                |
-|  FF02      |  Do adresu rejestru slave-a __1__  |
+|  FF02      |  Do adresu trzeciego rejestru pierwszego slave-a  |
 |  0001      |  Wartość 0001   |
 
 W naszej impilementacji zostało jednogłośnie przyjęte że adresy slave-ów zaczynają się od <u>FF<u>.
