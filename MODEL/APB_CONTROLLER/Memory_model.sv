@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+// `timescale 1ns / 1ps
 
 module Memory_model #(
    parameter   ADDR_WIDTH        = 16,             // memory address size – memory depth = 2^ADDR_WIDTH

@@ -22,29 +22,28 @@ module exe_unit_w47( i_argA, i_argB, i_oper, i_clk, i_rsn, o_result , o_status);
 
 	int i;
 	
-	initial begin 
-		o_status = '0;
-		ERROR 	=	 0;
-		ODD 	=	 0;
-		ZERO 	=	 0;
-		NEG 	=	 0;
-		s_result 	= 'x;
+	// initial begin 
+	// 	o_status = '0;
+	// 	ERROR 	=	 0;
+	// 	ODD 	=	 0;
+	// 	ZERO 	=	 0;
+	// 	NEG 	=	 0;
+	// 	s_result 	= 'x;
 
-	end
+	// end
 
-	always_comb 
-
+	always_ff @ (*)
 	begin 
 		s_result = 'x;		
 		ODD = 0;	 
 		ERROR = 0;
 
 		case (i_oper)
-			2'b00 :	begin 
+			2'b00:	begin 
 					s_result = i_argB;			//operacja 1 odwracanie arg_A 
-			      		s_result[MBIT-1] = ~i_argB[MBIT-1];
+	    		s_result[MBIT-1] = ~i_argB[MBIT-1];
 				end
-			2'b01 : begin 						// operacja 2 porownanie liczb ZnMod
+			2'b01: begin 						// operacja 2 porownanie liczb ZnMod
 					if ((i_argA << 1) >= (i_argB << 1))	// A>=B po modulu
 					begin
 						if (i_argA[MBIT-1]==0)
@@ -179,8 +178,8 @@ module exe_unit_w47( i_argA, i_argB, i_oper, i_clk, i_rsn, o_result , o_status);
 	begin 
 		if (i_rsn == 0) 
 		begin 
-			o_status = '0;
-			o_result = '0;
+			o_status <= '0;
+			o_result <= '0;
 		end 
 		else 
 		begin 

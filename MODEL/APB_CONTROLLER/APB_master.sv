@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+// `timescale 1ns / 1ps
 
 module APB_master #(
    parameter   SEL_WIDTH                  = 1,           // PSEL width - one bit for each slave

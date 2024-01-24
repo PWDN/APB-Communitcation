@@ -1,0 +1,15 @@
+read_verilog -sv MODEL/APB_EXE_UNIT_2/*
+
+hierarchy -top apb_slave_exe_w48
+
+flatten apb_slave_exe_w48
+
+synth
+
+abc -g AND,OR,XOR
+
+opt_clean
+
+write_verilog -noattr RTL/APB_slave_exe_unit_w48_rtl.sv
+
+stat -tech cmos

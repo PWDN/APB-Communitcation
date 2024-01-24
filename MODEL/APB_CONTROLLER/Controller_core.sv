@@ -6,31 +6,35 @@ module controller_core #(
     i_clk,
     i_rsn,
     i_data_r,
+    i_data_r_mem,
     o_halt,
 
-    // FOR APB
-    i_PREADY,
-    i_PRDATA,
-    i_PSLVERR,
     o_addr,
+    o_addr_mem,
     o_slave_sel1,
     o_slave_sel2,
-    o_PENABLE,
-    o_PWRITE,
-    o_PWDATA,
+    o_en,
+    o_wr,
+    o_wr_mem,
+    o_data,
+    o_data_mem,
+    o_dump
   );
   input logic i_clk;
   input logic i_rsn;
   input logic [DATA_WIDTH-1:0] i_data_r;
-  input logic i_PREADY;
-  input logic [DATA_WIDTH-1:0] i_PRDATA;
+  input logic [DATA_WIDTH-1:0] i_data_r_mem;
   output logic [ADDR_WIDTH-1:0] o_addr;
-  output o_slave_sel1;
-  output o_slave_sel2;
-  output logic o_PENABLE;
-  output logic o_PWRITE;
-  output logic [DATA_WIDTH-1:0] o_PWDATA;
-
+  output logic [ADDR_WIDTH-1:0] o_addr_mem;
+  output logic o_slave_sel1;
+  output logic o_slave_sel2;
+  output logic o_en;
+  output logic o_wr;
+  output logic o_wr_mem;
+  output logic [DATA_WIDTH-1:0] o_data;
+  output logic [DATA_WIDTH-1:0] o_data_mem;
+  output logic o_dump;
+  output logic o_halt;
   // istructions
   localparam INS_NOOP = 'h0000; // NO OPeration
   localparam INS_LOAD = 'h0001; // Load FROM TO SOMETHING
@@ -45,18 +49,18 @@ module controller_core #(
   logic [DATA_WIDTH-1:0] register_a = 0;
   logic [DATA_WIDTH-1:0] register_b = 0;
   logic [DATA_WIDTH-1:0] register_c = 0;
-  logic write_to_mem;
+  logic write_to_slave;
 
-  always_ff
+  always_ff @ (*)
   begin
     if (current_ins == INS_LOAD)
       begin
-        if(register_a >= 'hFF00)
-          write_to_mem = 0;
+        if(register_b >= 'hFF00)
+          write_to_slave = 1;
       end
     else
       begin
-        write_to_mem = 1;
+        write_to_slave = 0;
       end
   end
 
@@ -64,11 +68,15 @@ module controller_core #(
   begin
     if (!i_rsn)
       begin
-        o_PADDR <= 0;
-        o_PSEL <= 0;
-        o_PENABLE <= 0;
-        o_PWRITE <= 0;
-        o_PWDATA <= 0;
+        o_addr <= 0;
+        o_addr_mem <= 0;
+        o_slave_sel1 <= 0;
+        o_slave_sel2 <= 0;
+        o_en <= 0;
+        o_wr <= 0;
+        o_wr_mem <= 0;
+        o_data <= 0;
+        o_data_mem <= 0;
       end
     else
       begin
@@ -81,52 +89,71 @@ module controller_core #(
             case (current_ins)
               INS_NOOP:
                 begin
-                  current_ins_addr <= o_PADDR + 1;
-                  o_PADDR <= current_ins_addr;
+                  current_ins_addr <= o_addr_mem + 1;
+                  o_addr_mem <= current_ins_addr;
                   hold_state <= 0; // we don't need to hold on that instruction for any longer;
-                end;
+                end
               INS_LOAD:
                 begin
                   case (hold_state)
                     'd4:
                       begin
-                        o_PADDR <= o_PADDR + 1;
+                        o_addr_mem <= o_addr_mem + 1;
                         hold_state <= 3;
                         register_a <= current_ins;
+                        if (~write_to_slave)
+                        begin
+                          o_wr <= 0;
+                          o_slave_sel1 <= current_ins[4];
+                          o_slave_sel2 <= current_ins[5];
+                          o_addr_mem <= current_ins[3:0];
+                        end
                       end
                     'd3:
                       begin
-                        o_PADDR <= o_PADDR + 1;
+                        o_addr_mem <= o_addr_mem + 1;
                         hold_state <= 2;
                         register_b <= current_ins;
                       end
                     'd2:
                       begin
-                        o_PADDR <= o_PADDR + 1;
+                        o_addr_mem <= o_addr_mem + 1;
                         hold_state <= 1;
                         register_c <= current_ins;
                       end
                     'd1:
                       begin
-                        o_PADDR <= o_PADDR +1;
+                        o_addr_mem <= o_addr_mem + 1;
                         hold_state <= 0;
-                        o_PENABLe <= 1;
-                        if (write_to_mem)
+                        o_en <= 1;
+                        if (write_to_slave)
                           begin
-                            o_PWRITE <= 0;
-                            
+                            o_wr <= 1;
+                            o_wr_mem <= 0;
+                            o_addr <= register_b[3:0];
+                            o_slave_sel1 <= register_b[4];
+                            o_slave_sel2 <= register_b[5];
+                            o_data <= register_c;
                           end
                         else
                           begin
-                            o_PWRITE <= 1;
+                            o_wr <= 0;
+                            o_wr_mem <= 1;
+                            o_data <= register_c;    
                           end
                       end
                   endcase
                 end
+              INS_DUMP:
+                begin
+                  current_ins_addr <= o_addr_mem + 1;
+                  o_addr_mem <= current_ins_addr;
+                  hold_state <= 0;
+                end
+              INS_HALT: o_halt <= 1'b1;
+              default: o_halt <= 1'b1;
               endcase
           end
       end
   end
-
-
 endmodule

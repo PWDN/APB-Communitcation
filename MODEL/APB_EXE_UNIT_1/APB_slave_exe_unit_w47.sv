@@ -1,4 +1,4 @@
-module APB_slave_exe_w47 #(
+module apb_slave_exe_w47 #(
 	parameter DATA_WIDTH = 3,
 	parameter ADDR_WIDTH = 16)(
 			i_PCLK,
@@ -8,7 +8,7 @@ module APB_slave_exe_w47 #(
 			i_PENABLE,
 			i_PWRITE,
 			i_PWDATA,
-			o_READY,
+			o_PREADY,
 			o_PRDATA,
 			o_PSLVERR);
 
@@ -33,8 +33,8 @@ module APB_slave_exe_w47 #(
                   .NBIT(DATA_WIDTH))    exe_unit_w47_model (.i_oper(s_in_oper), 
                                                        .i_argA(s_in_argA),
                                                        .i_argB(s_in_argB),
-                                                       .i_clk(s_in_clk),
-                                                       .i_rsn(s_in_rsn),
+                                                       .i_clk(i_PCLK),
+                                                       .i_rsn(i_PRESETn),
                                                        .o_result(s_model_outs),
                                                        .o_status(s_model_status));
 
@@ -42,7 +42,7 @@ module APB_slave_exe_w47 #(
 	begin
 		if (~i_PRESETn)
 			begin
-				o_READY <= 0;
+				o_PREADY <= 0;
 				o_PRDATA <= 0;
 				o_PSLVERR <= 0;
 			end
@@ -57,7 +57,7 @@ module APB_slave_exe_w47 #(
 									1: s_in_argA <= i_PWDATA;
 									2: s_in_argA <= i_PWDATA;
 								endcase
-								o_READY <= 1;
+								o_PREADY <= 1;
 								o_PRDATA <= 0;
 								o_PSLVERR <= 0;
 							end
@@ -68,13 +68,13 @@ module APB_slave_exe_w47 #(
 									1: o_PRDATA <= { {(DATA_WIDTH-4){1'b0}}, s_model_status[3:0] };
 									default: o_PRDATA <= 0;
 								endcase
-								o_READY <= 1;
+								o_PREADY <= 1;
 								o_PSLVERR <= 0;
 							end
 					end
 				else
 					begin
-						o_READY <= 0;
+						o_PREADY <= 0;
 						o_PRDATA <= 0;
 						o_PSLVERR <= 0;
 					end
